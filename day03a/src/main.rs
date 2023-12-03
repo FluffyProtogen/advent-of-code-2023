@@ -14,48 +14,48 @@ fn main() {
 
     let total = lines
         .iter()
-        .map(|line| {
-            let (_, numbers) = line.split(|l: char| !l.is_digit(10)).enumerate().fold(
-                (0, vec![]),
-                |(mut length_offset, mut vec), (index, number)| {
-                    if let Ok(num) = number.parse::<u16>() {
-                        vec.push((num, index + length_offset, number.len()));
-                        length_offset += number.len();
-                    }
-
-                    (length_offset, vec)
-                },
-            );
-            numbers
-        })
         .enumerate()
-        .flat_map(|(line_index, mut numbers)| {
-            numbers.retain(|(_, index, length)| {
-                (0..*length).any(|index_offset| {
-                    CHECK_LOCATIONS.iter().any(|(x, y)| {
-                        let Ok(x) = usize::try_from(*index as i16 + index_offset as i16 + x) else {
-                            return false;
-                        };
-                        let Ok(y) = usize::try_from(line_index as i16 + y) else {
-                            return false;
-                        };
+        .flat_map(|(line_y, line)| {
+            let mut number_offset = 0;
+            let lines = &lines;
+            line.split(|l: char| !l.is_digit(10))
+                .filter_map(move |split| {
+                    let Ok(number) = split.parse::<u16>() else {
+                        number_offset += 1;
+                        return None;
+                    };
+                    (0..split.len())
+                        .any(|index_offset| {
+                            CHECK_LOCATIONS.iter().any(|(x, y)| {
+                                let (Ok(x), Ok(y)) = (
+                                    usize::try_from(number_offset + x + index_offset as i16),
+                                    usize::try_from(line_y as i16 + y),
+                                ) else {
+                                    return false;
+                                };
 
-                        if !(0..lines.len()).contains(&y) || !(0..lines[0].len()).contains(&x) {
-                            false
-                        } else {
-                            match lines[y].chars().nth(x) {
-                                Some('@' | '*' | '%' | '#' | '/' | '&' | '$' | '+' | '-' | '=') => {
-                                    true
+                                if !(0..lines.len()).contains(&y)
+                                    || !(0..lines[0].len()).contains(&x)
+                                {
+                                    false
+                                } else {
+                                    match lines[y].chars().nth(x) {
+                                        Some(
+                                            '@' | '*' | '%' | '#' | '/' | '&' | '$' | '+' | '-'
+                                            | '=',
+                                        ) => true,
+                                        _ => false,
+                                    }
                                 }
-                                _ => false,
-                            }
-                        }
-                    })
+                            })
+                        })
+                        .then_some({
+                            number_offset += split.len() as i16 + 1;
+                            number as u32
+                        })
                 })
-            });
-            numbers
         })
-        .fold(0, |acc, (number, ..)| acc + number as u32);
+        .sum::<u32>();
 
     println!("{total}");
 }
