@@ -1,5 +1,3 @@
-use substring::Substring;
-
 const NUMBERS: [(&str, u32); 9] = [
     ("one", 1),
     ("two", 2),
@@ -17,14 +15,13 @@ fn main() {
         .lines()
         .map(|line| {
             let mut numbers = (0..line.len()).filter_map(|i| {
-                let substring = line.substring(i, (i + 5).clamp(0, line.len()));
+                let substring = &line[i..(i + 5).clamp(0, line.len())];
                 if let Some(num) = substring.chars().nth(0).and_then(|char| char.to_digit(10)) {
                     return Some(num);
                 }
                 NUMBERS
                     .iter()
-                    .find(|(number, _)| substring.starts_with(number))
-                    .map(|(_, value)| *value)
+                    .find_map(|(number, value)| substring.starts_with(number).then_some(*value))
             });
             let first = numbers.nth(0).unwrap();
             first * 10 + numbers.last().unwrap_or(first)
