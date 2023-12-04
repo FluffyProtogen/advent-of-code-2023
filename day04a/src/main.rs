@@ -18,10 +18,9 @@ fn main() {
                 .filter(|number| winning_numbers.contains(number))
                 .count();
 
-            if wins == 0 {
-                0
-            } else {
-                2u32.pow(wins as u32 - 1)
+            match wins {
+                0 => 0,
+                _ => 2u32.pow(wins as u32 - 1),
             }
         })
         .sum::<u32>();
