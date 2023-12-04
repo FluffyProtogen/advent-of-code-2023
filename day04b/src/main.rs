@@ -30,5 +30,5 @@ fn total_cards(card_wins: &[u8], index: usize, amount: usize) -> u32 {
         .iter()
         .enumerate()
         .map(|(i, wins)| total_cards(card_wins, index + i + 1, *wins as usize) + *wins as u32)
-        .sum::<u32>()
+        .sum()
 }
