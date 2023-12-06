@@ -34,7 +34,7 @@ struct MapRange {
 
 impl MapRange {
     fn look_up(&self, number: u64) -> Option<u64> {
-        (self.source_start..=self.source_start + self.count)
+        (self.source_start..self.source_start + self.count)
             .contains(&number)
             .then(|| (number - self.source_start) + self.destination_start)
     }
