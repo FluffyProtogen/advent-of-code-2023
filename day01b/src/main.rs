@@ -16,14 +16,14 @@ fn main() {
         .map(|line| {
             let mut numbers = (0..line.len()).filter_map(|i| {
                 let substring = &line[i..(i + 5).clamp(0, line.len())];
-                if let Some(num) = substring.chars().nth(0).and_then(|char| char.to_digit(10)) {
+                if let Some(num) = substring.chars().next().and_then(|char| char.to_digit(10)) {
                     return Some(num);
                 }
                 NUMBERS
                     .iter()
                     .find_map(|(number, value)| substring.starts_with(number).then_some(*value))
             });
-            let first = numbers.nth(0).unwrap();
+            let first = numbers.next().unwrap();
             first * 10 + numbers.last().unwrap_or(first)
         })
         .sum::<u32>();

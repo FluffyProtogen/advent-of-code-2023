@@ -3,7 +3,7 @@ fn main() {
         .lines()
         .map(|line| {
             let mut numbers = line.chars().flat_map(|char| char.to_digit(10));
-            let first = numbers.nth(0).unwrap();
+            let first = numbers.next().unwrap();
             first * 10 + numbers.last().unwrap_or(first)
         })
         .sum::<u32>();

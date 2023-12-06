@@ -32,8 +32,8 @@ fn main() {
                     if !(0..lines.len()).contains(&y) || !(0..lines[0].len()).contains(&x) {
                         return None;
                     }
-                    let result = find_number(&lines[y], x).map(|result| (result.0, result.1, y));
-                    result
+
+                    find_number(lines[y], x).map(|result| (result.0, result.1, y))
                 })
                 .unique_by(|key| (key.1, key.2))
                 .collect_vec();
@@ -62,7 +62,7 @@ fn find_number(line: &str, position: usize) -> Option<(u16, u16)> {
     }
     line.chars()
         .skip(index)
-        .take_while(|c| c.to_digit(10).is_some())
+        .take_while(|c| c.is_digit(10))
         .collect::<String>()
         .parse()
         .ok()

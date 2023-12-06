@@ -8,12 +8,12 @@ fn main() {
             let (winning_numbers, held_numbers) = line.split_once(" | ").unwrap();
 
             let winning_numbers = winning_numbers
-                .split(" ")
+                .split(' ')
                 .flat_map(|line| line.parse::<u8>())
                 .collect::<HashSet<_>>();
 
             held_numbers
-                .split(" ")
+                .split(' ')
                 .flat_map(|line| line.parse())
                 .filter(|number| winning_numbers.contains(number))
                 .count() as u8
